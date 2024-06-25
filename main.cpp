@@ -1,23 +1,20 @@
-#include <iostream>
 #include "WeatherDay.h"
-#include "WeatherBook.h"
 
-int main()
-{
-    // Replace "weather_data.csv" with the path to your CSV file
-    std::string filename = "temperature_data.csv";
-    WeatherBook weatherBook(filename);
+int main() {
+    std::string filename = "weather_data_EU_1980-2019_temp_only.csv";
+    std::string temperatureColumn;
 
-    std::vector<WeatherDay> weatherDays = weatherBook.getWeatherDays();
-    
-    for (const WeatherDay& day : weatherDays)
-    {
-        std::cout << "Date: " << day.date
-                  << ", First Temp: " << day.firstTemperature
-                  << ", Last Temp: " << day.lastTemperature
-                  << ", High Temp: " << day.highestTemperature
-                  << ", Low Temp: " << day.lowestTemperature
-                  << std::endl;
+    std::cout << "Enter the temperature column name (e.g., AT_temperature, BE_temperature): ";
+    std::cin >> temperatureColumn;
+
+    std::map<std::string, WeatherDay> weatherData = parseCSV(filename, temperatureColumn);
+
+    for (const auto& wd : weatherData) {
+        std::cout << "Date: " << wd.second.date << "\n";
+        std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
+        std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
+        std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
+        std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
     }
 
     return 0;
