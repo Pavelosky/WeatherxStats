@@ -1,6 +1,6 @@
 #include "WeatherDay.h"
 
-std::map<std::string, WeatherDay> parseCSV(const std::string& filename, const std::string& temperatureColumn) {
+std::map<std::string, WeatherDay> parseCSV(const std::string& filename, const std::string& temperatureColumn, const int& timeFrame) {
     std::ifstream file(filename);
     std::string line;
     std::map<std::string, WeatherDay> weatherData;
@@ -40,7 +40,7 @@ std::map<std::string, WeatherDay> parseCSV(const std::string& filename, const st
             if (tokens.size() > tempColumnIndex) {
                 std::string utc_timestamp = tokens[0];
                 double at_temp = std::stod(tokens[tempColumnIndex]);
-                std::string date = utc_timestamp.substr(0, 4);
+                std::string date = utc_timestamp.substr(0, timeFrame);
 
                 if (weatherData.find(date) == weatherData.end()) {
                     WeatherDay wd;

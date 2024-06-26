@@ -26,6 +26,6 @@ public:
     }
 };
 
-std::map<std::string, WeatherDay> parseCSV(const std::string& filename, const std::string& temperatureColumn);
+std::map<std::string, WeatherDay> parseCSV(const std::string& filename, const std::string& temperatureColumn, const int& timeFrame);
 
 #endif // WEATHERDAY_H
