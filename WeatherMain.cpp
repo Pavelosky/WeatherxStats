@@ -13,6 +13,8 @@ void WeatherMain::init()
 {
 
     int input;
+    int selectedTimeFrame = 0;
+    std::string selectedCountry = "";
 
     while(true)
     {
@@ -75,18 +77,18 @@ void WeatherMain::processUserOption(int option)
             break;
         case 2:
             // choose a country
-            chooseCountry();
+            selectedCountry = chooseCountry();
             break;
         case 3:
             // print all countries
             break;
         case 4:
             // choose time frame
-            chooseTimeFrame();
+            selectedTimeFrame = chooseTimeFrame();
             break;
         case 5:
             // show data
-            showData();
+            showData(selectedCountry, selectedTimeFrame);
             break;        
         case 6:
             exit(0);
@@ -122,6 +124,7 @@ int WeatherMain::chooseTimeFrame()
     timeFrameMap["day"] = 9;
     timeFrameMap["month"] = 7;
     timeFrameMap["year"] = 4;
+
     std::string timeFrame;
     std::cout << "==========================" << std::endl;
     std::cout << "| Choose a time frame:   |" << std::endl;
@@ -154,12 +157,18 @@ int WeatherMain::chooseTimeFrame()
     }
 }
 
-void WeatherMain::showData()
+void WeatherMain::showData(const std::string& country, int timeFrame)
 {       
     std::string filename = "temperature_data.csv";
-    std::string country = chooseCountry();
 
-    std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country);
+    if (country.empty() || timeFrame == 0) {
+        std::cout << "==========================================" << std::endl;
+        std::cout << "| Invalid country or time frame          |" << std::endl;
+        std::cout << "==========================================" << std::endl;
+        return;
+    }
+
+    std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country, timeFrame);
 
     for (const auto& wd : weatherData) {
         std::cout << "Date: " << wd.second.date << "\n";

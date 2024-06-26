@@ -9,13 +9,15 @@ class WeatherMain
         WeatherMain();
         /** Call this to start the sim */
         void init();
-    private: 
         void printMenu();
         void printHelp();
         int getUserOption();
         void processUserOption(int option);
         std::string chooseCountry();
         int chooseTimeFrame();
-        void showData();
+        void showData(const std::string& country, int timeFrame);
+    private: 
+        std::string selectedCountry; // Member variable to store the selected country
+        int selectedTimeFrame; // Member variable to store the selected time frame
 
 };
