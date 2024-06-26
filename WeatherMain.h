@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 class WeatherMain
 {
@@ -13,5 +14,8 @@ class WeatherMain
         void printHelp();
         int getUserOption();
         void processUserOption(int option);
+        std::string chooseCountry();
+        int chooseTimeFrame();
+        void showData();
 
 };

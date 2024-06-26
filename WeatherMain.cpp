@@ -1,5 +1,7 @@
 #include "WeatherMain.h"
+#include "WeatherDay.h"
 #include <iostream>
+#include <map>
 
 
 WeatherMain::WeatherMain()
@@ -9,6 +11,7 @@ WeatherMain::WeatherMain()
 
 void WeatherMain::init()
 {
+
     int input;
 
     while(true)
@@ -29,8 +32,10 @@ void WeatherMain::printMenu()
     std::cout << "3: Print all countries " << std::endl;
     // 4 chose time frame (day, month, year)
     std::cout << "4: Choose time frame (day, month, year) " << std::endl;
-    // 5 exit
-    std::cout << "5: Exit " << std::endl;
+    // 5 show data
+    std::cout << "5: Show data " << std::endl;
+    // 6 exit
+    std::cout << "6: Exit " << std::endl;
 
 }
 
@@ -70,14 +75,20 @@ void WeatherMain::processUserOption(int option)
             break;
         case 2:
             // choose a country
+            chooseCountry();
             break;
         case 3:
             // print all countries
             break;
         case 4:
             // choose time frame
+            chooseTimeFrame();
             break;
         case 5:
+            // show data
+            showData();
+            break;        
+        case 6:
             exit(0);
             break;
         default:
@@ -88,3 +99,73 @@ void WeatherMain::processUserOption(int option)
             break;
     }
 }
+
+std::string WeatherMain::chooseCountry()
+{
+    std::string country;
+    std::cout << "======================" << std::endl;
+    std::cout << "| Choose a country: |" << std::endl;
+    std::cout << "| for eg. NL_temperature, BG_temperature |" << std::endl;
+    std::cout << "======================" << std::endl;
+    std::getline(std::cin, country);
+    std::cout << "======================" << std::endl;
+    std::cout << "| You chose: " << country << " |" << std::endl;
+    std::cout << "======================" << std::endl;
+
+    return country;
+
+}
+
+int WeatherMain::chooseTimeFrame()
+{
+    std::map<std::string, int> timeFrameMap;
+    timeFrameMap["day"] = 9;
+    timeFrameMap["month"] = 7;
+    timeFrameMap["year"] = 4;
+    std::string timeFrame;
+    std::cout << "==========================" << std::endl;
+    std::cout << "| Choose a time frame:   |" << std::endl;
+    std::cout << "| for eg. day, month, year |" << std::endl;
+    std::cout << "==========================" << std::endl;
+    std::getline(std::cin, timeFrame);
+    std::cout << "==========================" << std::endl;
+    std::cout << "| You chose: " << timeFrame << " |" << std::endl;
+    std::cout << "==========================" << std::endl;
+
+    if (timeFrame == "day")
+    {
+        return timeFrameMap["day"];
+    }
+    else if (timeFrame == "month")
+    {
+        return timeFrameMap["month"];
+    }
+    else if (timeFrame == "year")
+    {
+        return timeFrameMap["year"];
+    }
+    else
+    {
+        std::cout << "==========================================" << std::endl;
+        std::cout << "| Invalid option                         |" << std::endl;
+        std::cout << "| Please choose a day, month or year     |" << std::endl;
+        std::cout << "==========================================" << std::endl;
+        return 0; // or any other appropriate value
+    }
+}
+
+void WeatherMain::showData()
+{       
+    std::string filename = "temperature_data.csv";
+    std::string country = chooseCountry();
+
+    std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country);
+
+    for (const auto& wd : weatherData) {
+        std::cout << "Date: " << wd.second.date << "\n";
+        std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
+        std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
+        std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
+        std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
+    }
+}       
