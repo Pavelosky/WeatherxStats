@@ -2,7 +2,7 @@
 #include "WeatherDay.h"
 #include <iostream>
 #include <map>
-
+#include <iomanip>
 
 WeatherMain::WeatherMain()
 {
@@ -170,11 +170,27 @@ void WeatherMain::showData(const std::string& country, int timeFrame)
 
     std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country, timeFrame);
 
+    // for (const auto& wd : weatherData) {
+    //     std::cout << "Date: " << wd.second.date << "\n";
+    //     std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
+    //     std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
+    //     std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
+    //     std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
+    // }
+    displayCandlestickChart(weatherData);
+} 
+
+void WeatherMain::displayCandlestickChart(const std::map<std::string, WeatherDay>& weatherData)
+{
+    std::cout << "Candlestick Chart:" << std::endl;
+    std::cout << "Date       | O   H   L   C" << std::endl;
+    std::cout << "-----------|----------------" << std::endl;
+
     for (const auto& wd : weatherData) {
-        std::cout << "Date: " << wd.second.date << "\n";
-        std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
-        std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
-        std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
-        std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
+        std::cout << wd.first << " | ";
+        std::cout << std::setw(3) << wd.second.firstTemp << " ";
+        std::cout << std::setw(3) << wd.second.highestTemp << " ";
+        std::cout << std::setw(3) << wd.second.lowestTemp << " ";
+        std::cout << std::setw(3) << wd.second.lastTemp << std::endl;
     }
-}       
+}
