@@ -2,22 +2,51 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <map>
+
 
 CSVReader::CSVReader()
 {
 }
 
-std::vector<std::vector<std::string>> CSVReader::readCSV(const std::string& filename)
+std::vector<std::vector<std::string>> CSVReader::readCSV(const std::string& filename, const std::string& columnName)
 {
     std::vector<std::vector<std::string>> data;
     std::ifstream csvFile(filename);
     std::string line;
 
+    int targetColumnIndex = -1;
+
     if (csvFile.is_open())
     {
+        bool isFirstLine = true;
         while (std::getline(csvFile, line))
         {
-            data.push_back(tokenize(line, ','));
+            // Read the first line to get the column index
+            if (isFirstLine)
+            {
+                targetColumnIndex = getColumnIndex(line, columnName);
+
+                if (targetColumnIndex == -1)
+                {
+                    std::cerr << "Column name \"" << columnName << "\" not found in CSV header." << std::endl;
+                    return {};
+                }
+                isFirstLine = false;
+            }
+            // Read the rest of the lines
+            else
+            {
+                std::vector<std::string> tokens = tokenize(line, ',');
+                if (tokens.size() > targetColumnIndex)
+                {
+                    data.push_back({tokens[0], tokens[targetColumnIndex]});
+                }
+                else
+                {
+                    std::cerr << "Row size mismatch. Row: " << line << std::endl;
+                }
+            }
         }
         csvFile.close();
     }
@@ -40,4 +69,17 @@ std::vector<std::string> CSVReader::tokenize(const std::string& line, char separ
     }
 
     return tokens;
+}
+
+int CSVReader::getColumnIndex(const std::string& headerLine, const std::string& columnName)
+{
+    std::vector<std::string> headers = tokenize(headerLine, ',');
+    for (int i = 0; i < headers.size(); ++i)
+    {
+        if (headers[i] == columnName)
+        {
+            return i;
+        }
+    }
+    return -1; // Column not found
 }
