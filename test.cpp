@@ -3,21 +3,17 @@
 #include <iostream>
 #include <map>
 #include <iomanip>
+#include <vector>
+#include <algorithm>
+#include <climits> // for INT_MAX and INT_MIN
 
-WeatherMain::WeatherMain()
-{
-
-}
+WeatherMain::WeatherMain() : selectedCountry(""), selectedTimeFrame(0) {}
 
 void WeatherMain::init()
 {
-
     int input;
-    int selectedTimeFrame = 0;
-    std::string selectedCountry = "";
 
-    while(true)
-    {
+    while (true) {
         printMenu();
         input = getUserOption();
         processUserOption(input);
@@ -26,19 +22,12 @@ void WeatherMain::init()
 
 void WeatherMain::printMenu()
 {
-    // 1 print help
     std::cout << "1: Print help " << std::endl;
-    // 2 choose a country
     std::cout << "2: Choose a country " << std::endl;
-    // 3 print all countries
     std::cout << "3: Print all countries " << std::endl;
-    // 4 chose time frame (day, month, year)
     std::cout << "4: Choose time frame (day, month, year) " << std::endl;
-    // 5 show data
     std::cout << "5: Show data " << std::endl;
-    // 6 exit
     std::cout << "6: Exit " << std::endl;
-
 }
 
 void WeatherMain::printHelp()
@@ -53,14 +42,13 @@ int WeatherMain::getUserOption()
     int userOption = 0;
     std::string line;
     std::cout << "===============" << std::endl;
-    std::cout << "| Type in 1-5 |" << std::endl;
+    std::cout << "| Type in 1-6 |" << std::endl; // Ensure users can select option 6 to exit
     std::cout << "===============" << std::endl;
     std::getline(std::cin, line);
-    try{
+    try {
         userOption = std::stoi(line);
-    }catch(const std::exception& e)
-    {
-        // 
+    } catch (const std::exception& e) {
+        // Handle invalid input
     }
     std::cout << "================" << std::endl;
     std::cout << "| You chose: " << userOption << " |" << std::endl;
@@ -70,33 +58,29 @@ int WeatherMain::getUserOption()
 
 void WeatherMain::processUserOption(int option)
 {
-    switch(option)
-    {
+    switch (option) {
         case 1:
             printHelp();
             break;
         case 2:
-            // choose a country
             selectedCountry = chooseCountry();
             break;
         case 3:
             // print all countries
             break;
         case 4:
-            // choose time frame
             selectedTimeFrame = chooseTimeFrame();
             break;
         case 5:
-            // show data
             showData(selectedCountry, selectedTimeFrame);
-            break;        
+            break;
         case 6:
             exit(0);
             break;
         default:
             std::cout << "==========================================" << std::endl;
             std::cout << "| Invalid option                         |" << std::endl;
-            std::cout << "| Please choose a number between 1 and 5 |" << std::endl;
+            std::cout << "| Please choose a number between 1 and 6 |" << std::endl;
             std::cout << "==========================================" << std::endl;
             break;
     }
@@ -115,7 +99,6 @@ std::string WeatherMain::chooseCountry()
     std::cout << "======================" << std::endl;
 
     return country;
-
 }
 
 int WeatherMain::chooseTimeFrame()
@@ -135,20 +118,13 @@ int WeatherMain::chooseTimeFrame()
     std::cout << "| You chose: " << timeFrame << " |" << std::endl;
     std::cout << "==========================" << std::endl;
 
-    if (timeFrame == "day")
-    {
+    if (timeFrame == "day") {
         return timeFrameMap["day"];
-    }
-    else if (timeFrame == "month")
-    {
+    } else if (timeFrame == "month") {
         return timeFrameMap["month"];
-    }
-    else if (timeFrame == "year")
-    {
+    } else if (timeFrame == "year") {
         return timeFrameMap["year"];
-    }
-    else
-    {
+    } else {
         std::cout << "==========================================" << std::endl;
         std::cout << "| Invalid option                         |" << std::endl;
         std::cout << "| Please choose a day, month or year     |" << std::endl;
@@ -158,7 +134,7 @@ int WeatherMain::chooseTimeFrame()
 }
 
 void WeatherMain::showData(const std::string& country, int timeFrame)
-{       
+{
     std::string filename = "temperature_data.csv";
 
     if (country.empty() || timeFrame == 0) {
@@ -168,69 +144,55 @@ void WeatherMain::showData(const std::string& country, int timeFrame)
         return;
     }
 
+    // Debug print to check function execution
+    std::cout << "Processing data for country: " << country << " and time frame: " << timeFrame << std::endl;
+
     std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country, timeFrame);
 
-    // for (const auto& wd : weatherData) {
-    //     std::cout << "Date: " << wd.second.date << "\n";
-    //     std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
-    //     std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
-    //     std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
-    //     std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
-    // }
-    displayCandlestickChart(weatherData);
-} 
+    if (weatherData.empty()) {
+        std::cout << "No data available for the selected country and time frame." << std::endl;
+    } else {
+        displayCandlestickChart(weatherData);
+    }
+}
 
 void WeatherMain::displayCandlestickChart(const std::map<std::string, WeatherDay>& weatherData)
 {
-    // std::cout << "Candlestick Chart:" << std::endl;
-    // std::cout << "Date       | O   H   L   C" << std::endl;
-    // std::cout << "-----------|----------------" << std::endl;
-
-    for (const auto& wd : weatherData) {
-        std::cout << wd.first << " | ";
-        std::cout << std::setw(3) << wd.second.firstTemp << " ";
-        std::cout << std::setw(3) << wd.second.highestTemp << " ";
-        std::cout << std::setw(3) << wd.second.lowestTemp << " ";
-        std::cout << std::setw(3) << wd.second.lastTemp << std::endl;
-    }
-
     if (weatherData.empty()) {
         std::cout << "No data available to display." << std::endl;
         return;
     }
 
     // Determine the range of temperatures
-    int minTemp = INT_MAX;
-    int maxTemp = INT_MIN;
+    double minTemp = std::numeric_limits<double>::max();
+    double maxTemp = std::numeric_limits<double>::min();
 
     for (const auto& wd : weatherData) {
-        minTemp = std::min(minTemp, static_cast<int>(wd.second.lowestTemp));
-        maxTemp = std::max(maxTemp, static_cast<int>(wd.second.highestTemp));
+        minTemp = std::min(minTemp, wd.second.lowestTemp);
+        maxTemp = std::max(maxTemp, wd.second.highestTemp);
     }
 
-    int chartHeight = maxTemp - minTemp + 1;
-    int chartWidth = weatherData.size();
+    // Set the chart height (number of rows)
+    int chartHeight = 20;
+    double scale = chartHeight / (maxTemp - minTemp);
 
-    // Create a matrix to store the chart
-    std::vector<std::string> chart(chartHeight, std::string(chartWidth * 3, ' '));
+    std::vector<std::string> chart(chartHeight, std::string(weatherData.size() * 2, ' '));
 
     int col = 0;
     for (const auto& wd : weatherData) {
-        int openPos = maxTemp - wd.second.firstTemp;
-        int highPos = maxTemp - wd.second.highestTemp;
-        int lowPos = maxTemp - wd.second.lowestTemp;
-        int closePos = maxTemp - wd.second.lastTemp;
+        int openPos = static_cast<int>((wd.second.firstTemp - minTemp) * scale);
+        int highPos = static_cast<int>((wd.second.highestTemp - minTemp) * scale);
+        int lowPos = static_cast<int>((wd.second.lowestTemp - minTemp) * scale);
+        int closePos = static_cast<int>((wd.second.lastTemp - minTemp) * scale);
 
-        // Draw the candle body
         for (int i = std::min(openPos, closePos); i <= std::max(openPos, closePos); ++i) {
-            chart[i][col * 3 + 1] = '=';
+            chart[chartHeight - i - 1][col * 2 + 1] = '=';
         }
 
-        // Draw the shadows
-        chart[highPos][col * 3 + 1] = '|';
-        chart[lowPos][col * 3 + 1] = '|';
-        for (int i = highPos + 1; i < lowPos; ++i) {
-            chart[i][col * 3 + 1] = '=';
+        for (int i = highPos; i > lowPos; --i) {
+            if (chart[chartHeight - i - 1][col * 2 + 1] != '=') {
+                chart[chartHeight - i - 1][col * 2 + 1] = '|';
+            }
         }
 
         ++col;
