@@ -1,5 +1,4 @@
-#ifndef CHART_H
-#define CHART_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -31,5 +30,3 @@ public:
 private:
     std::vector<Candlestick> candlesticks;
 };
-
-#endif // CHART_H
