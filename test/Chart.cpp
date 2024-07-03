@@ -38,8 +38,8 @@ void Chart::printChart() const {
     }
 
     // Print the chart
-    for (int i = 20; i >= 0; --i) {
-        std::cout << std::setw(2) << (globalMax - globalMin) * i / 20 + globalMin << "\t   ";
+    for (int i = 21; i >= 0; --i) {
+        std::cout << std::setw(2) << (globalMax - globalMin) * i / 20 + globalMin << "\t";
         for (size_t j = 0; j < candlesticks.size(); ++j) {
             
             auto [openPos, closePos, highPos, lowPos] = normalizedPositions[j];
@@ -71,9 +71,15 @@ void Chart::printChart() const {
                 std::cout << "   ";
             }
             std::cout << "\t";
+            
         }
         std::cout << std::endl;
     }
+    std::cout << std::setw(6) << " " << "\t";
+    for (const auto& cs : candlesticks) {
+        std::cout << cs.date << "\t";
+    }
+    std::cout << std::endl;
 
     // Print the dates and values
     // for (const auto& cs : candlesticks) {
