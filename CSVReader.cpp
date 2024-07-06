@@ -4,11 +4,11 @@
 #include <sstream>
 #include <map>
 
-
 CSVReader::CSVReader()
 {
 }
 
+// Read the CSV file and return the data in a vector of vectors of strings
 std::vector<std::vector<std::string>> CSVReader::readCSV(const std::string& filename, const std::string& columnName)
 {
     std::vector<std::vector<std::string>> data;
@@ -57,6 +57,7 @@ std::vector<std::vector<std::string>> CSVReader::readCSV(const std::string& file
     return data;
 }
 
+// Tokenize a line of text based on a separator character and return the tokens as a vector of strings
 std::vector<std::string> CSVReader::tokenize(const std::string& line, char separator)
 {
     std::vector<std::string> tokens;
@@ -71,6 +72,7 @@ std::vector<std::string> CSVReader::tokenize(const std::string& line, char separ
     return tokens;
 }
 
+// Get the index of a column in the CSV header line based on its name
 int CSVReader::getColumnIndex(const std::string& headerLine, const std::string& columnName)
 {
     std::vector<std::string> headers = tokenize(headerLine, ',');

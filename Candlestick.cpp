@@ -2,11 +2,16 @@
 #include <sstream>
 #include <iostream>
 
+Candlestick::Candlestick() 
+{
+
+}
+
 std::vector<WeatherFrame> Candlestick::generateCandlesticks(const std::vector<std::vector<std::string>>& data, int timeFrame) {
-    std::vector<WeatherFrame> weatherFrames;
+    std::vector<WeatherFrame> candlesticks;
     if (data.empty()) {
         std::cerr << "No data provided." << std::endl;
-        return weatherFrames;
+        return candlesticks;
     }
 
     std::map<std::string, WeatherFrame> weatherData;
@@ -18,12 +23,14 @@ std::vector<WeatherFrame> Candlestick::generateCandlesticks(const std::vector<st
         std::string date = utc_timestamp.substr(0, timeFrame);
 
         if (weatherData.find(date) == weatherData.end()) {
+            // Create a new WeatherFrame if it doesn't exist for the current date
             WeatherFrame wf;
             wf.date = date;
             wf.firstTemp = at_temp;
             wf.addTemperature(at_temp);
             weatherData[date] = wf;
         } else {
+            // Add the temperature to the existing WeatherFrame for the current date
             weatherData[date].addTemperature(at_temp);
             weatherData[date].lastTemp = at_temp;
         }
@@ -31,8 +38,8 @@ std::vector<WeatherFrame> Candlestick::generateCandlesticks(const std::vector<st
 
     // Convert map values to vector
     for (const auto& pair : weatherData) {
-        weatherFrames.push_back(pair.second);
+        candlesticks.push_back(pair.second);
     }
 
-    return weatherFrames;
+    return candlesticks;
 }

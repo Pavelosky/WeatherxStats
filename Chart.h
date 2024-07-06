@@ -13,11 +13,11 @@
 class Chart {
 public:
     struct Candlestick {
-        std::string date;
-        double open;
-        double high;
-        double low;
-        double close;
+        std::string date;   // Date of the candlestick
+        double open;        // Opening price
+        double high;        // Highest price
+        double low;         // Lowest price
+        double close;       // Closing price
 
         Candlestick(const std::string& date, double open, double high, double low, double close)
             : date(date), open(open), high(high), low(low), close(close) {}
@@ -28,5 +28,5 @@ public:
     void printChart() const;
 
 private:
-    std::vector<Candlestick> candlesticks;
+    std::vector<Candlestick> candlesticks;   // Vector to store the candlesticks
 };

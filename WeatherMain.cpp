@@ -1,12 +1,18 @@
 #include "WeatherMain.h"
-#include "WeatherDay.h"
+#include "Candlestick.h"
+#include "WeatherFrame.h"
+#include "Chart.h"
+#include "CSVReader.h"
 #include <iostream>
 #include <map>
 #include <iomanip>
+#include <fstream>
+#include <string>
+
+
 
 WeatherMain::WeatherMain()
 {
-
 }
 
 void WeatherMain::init()
@@ -16,7 +22,7 @@ void WeatherMain::init()
     int selectedTimeFrame = 0;
     std::string selectedCountry = "";
 
-    while(true)
+    while (true)
     {
         printMenu();
         input = getUserOption();
@@ -29,16 +35,15 @@ void WeatherMain::printMenu()
     // 1 print help
     std::cout << "1: Print help " << std::endl;
     // 2 choose a country
-    std::cout << "2: Choose a country " << std::endl;
+    std::cout << "2: Print all countries " << std::endl;
     // 3 print all countries
-    std::cout << "3: Print all countries " << std::endl;
+    std::cout << "3: Choose a country " << std::endl;
     // 4 chose time frame (day, month, year)
     std::cout << "4: Choose time frame (day, month, year) " << std::endl;
     // 5 show data
     std::cout << "5: Show data " << std::endl;
     // 6 exit
     std::cout << "6: Exit " << std::endl;
-
 }
 
 void WeatherMain::printHelp()
@@ -56,11 +61,13 @@ int WeatherMain::getUserOption()
     std::cout << "| Type in 1-5 |" << std::endl;
     std::cout << "===============" << std::endl;
     std::getline(std::cin, line);
-    try{
-        userOption = std::stoi(line);
-    }catch(const std::exception& e)
+    try
     {
-        // 
+        userOption = std::stoi(line);
+    }
+    catch (const std::exception &e)
+    {
+        //
     }
     std::cout << "================" << std::endl;
     std::cout << "| You chose: " << userOption << " |" << std::endl;
@@ -70,35 +77,36 @@ int WeatherMain::getUserOption()
 
 void WeatherMain::processUserOption(int option)
 {
-    switch(option)
+    switch (option)
     {
-        case 1:
-            printHelp();
-            break;
-        case 2:
-            // choose a country
-            selectedCountry = chooseCountry();
-            break;
-        case 3:
-            // print all countries
-            break;
-        case 4:
-            // choose time frame
-            selectedTimeFrame = chooseTimeFrame();
-            break;
-        case 5:
-            // show data
-            showData(selectedCountry, selectedTimeFrame);
-            break;        
-        case 6:
-            exit(0);
-            break;
-        default:
-            std::cout << "==========================================" << std::endl;
-            std::cout << "| Invalid option                         |" << std::endl;
-            std::cout << "| Please choose a number between 1 and 5 |" << std::endl;
-            std::cout << "==========================================" << std::endl;
-            break;
+    case 1:
+        printHelp();
+        break;
+    case 2:
+        // print all countries
+        printAllCountries(filename);
+        break;
+    case 3:
+        // choose a country
+        selectedCountry = chooseCountry();
+        break;
+    case 4:
+        // choose time frame
+        selectedTimeFrame = chooseTimeFrame();
+        break;
+    case 5:
+        // show data
+        showData(selectedCountry, selectedTimeFrame);
+        break;
+    case 6:
+        exit(0);
+        break;
+    default:
+        std::cout << "==========================================" << std::endl;
+        std::cout << "| Invalid option                         |" << std::endl;
+        std::cout << "| Please choose a number between 1 and 5 |" << std::endl;
+        std::cout << "==========================================" << std::endl;
+        break;
     }
 }
 
@@ -115,7 +123,6 @@ std::string WeatherMain::chooseCountry()
     std::cout << "======================" << std::endl;
 
     return country;
-
 }
 
 int WeatherMain::chooseTimeFrame()
@@ -157,88 +164,51 @@ int WeatherMain::chooseTimeFrame()
     }
 }
 
-void WeatherMain::showData(const std::string& country, int timeFrame)
-{       
-    std::string filename = "temperature_data.csv";
+void WeatherMain::printAllCountries(const std::string& filename) {
+    CSVReader reader;
+    std::ifstream file(filename);
 
-    if (country.empty() || timeFrame == 0) {
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    if (std::getline(file, line)) {
+        std::vector<std::string> headers = reader.tokenize(line, ',');
+        for (size_t i = 1; i < headers.size(); ++i) {
+            std::cout << "Column " << i << ": " << headers[i] << std::endl;
+        }
+    } else {
+        std::cerr << "Error: File is empty or could not read the first line." << std::endl;
+    }
+
+    file.close();
+}
+    
+
+void WeatherMain::showData(const std::string &country, int timeFrame)
+{
+
+    if (country.empty() || timeFrame == 0)
+    {
         std::cout << "==========================================" << std::endl;
         std::cout << "| Invalid country or time frame          |" << std::endl;
         std::cout << "==========================================" << std::endl;
         return;
     }
 
-    std::map<std::string, WeatherDay> weatherData = parseCSV(filename, country, timeFrame);
+    CSVReader reader;
+    std::vector<std::vector<std::string>> data = reader.readCSV(filename, country);
 
-    // for (const auto& wd : weatherData) {
-    //     std::cout << "Date: " << wd.second.date << "\n";
-    //     std::cout << "First Temperature: " << wd.second.firstTemp << "\n";
-    //     std::cout << "Last Temperature: " << wd.second.lastTemp << "\n";
-    //     std::cout << "Highest Temperature: " << wd.second.highestTemp << "\n";
-    //     std::cout << "Lowest Temperature: " << wd.second.lowestTemp << "\n\n";
-    // }
-    displayCandlestickChart(weatherData);
-} 
+    if (!data.empty())
+    {
+        std::vector<WeatherFrame> candlesticks = Candlestick::generateCandlesticks(data, timeFrame);
 
-void WeatherMain::displayCandlestickChart(const std::map<std::string, WeatherDay>& weatherData)
-{
-    // std::cout << "Candlestick Chart:" << std::endl;
-    // std::cout << "Date       | O   H   L   C" << std::endl;
-    // std::cout << "-----------|----------------" << std::endl;
+        // Create a Chart object with the weather frames
+        Chart chart(candlesticks);
 
-    for (const auto& wd : weatherData) {
-        std::cout << wd.first << " | ";
-        std::cout << std::setw(3) << wd.second.firstTemp << " ";
-        std::cout << std::setw(3) << wd.second.highestTemp << " ";
-        std::cout << std::setw(3) << wd.second.lowestTemp << " ";
-        std::cout << std::setw(3) << wd.second.lastTemp << std::endl;
-    }
-
-    if (weatherData.empty()) {
-        std::cout << "No data available to display." << std::endl;
-        return;
-    }
-
-    // Determine the range of temperatures
-    int minTemp = INT_MAX;
-    int maxTemp = INT_MIN;
-
-    for (const auto& wd : weatherData) {
-        minTemp = std::min(minTemp, static_cast<int>(wd.second.lowestTemp));
-        maxTemp = std::max(maxTemp, static_cast<int>(wd.second.highestTemp));
-    }
-
-    int chartHeight = maxTemp - minTemp + 1;
-    int chartWidth = weatherData.size();
-
-    // Create a matrix to store the chart
-    std::vector<std::string> chart(chartHeight, std::string(chartWidth * 3, ' '));
-
-    int col = 0;
-    for (const auto& wd : weatherData) {
-        int openPos = maxTemp - wd.second.firstTemp;
-        int highPos = maxTemp - wd.second.highestTemp;
-        int lowPos = maxTemp - wd.second.lowestTemp;
-        int closePos = maxTemp - wd.second.lastTemp;
-
-        // Draw the candle body
-        for (int i = std::min(openPos, closePos); i <= std::max(openPos, closePos); ++i) {
-            chart[i][col * 3 + 1] = '=';
-        }
-
-        // Draw the shadows
-        chart[highPos][col * 3 + 1] = '|';
-        chart[lowPos][col * 3 + 1] = '|';
-        for (int i = highPos + 1; i < lowPos; ++i) {
-            chart[i][col * 3 + 1] = '=';
-        }
-
-        ++col;
-    }
-
-    // Print the chart
-    std::cout << "Candlestick Chart:" << std::endl;
-    for (const auto& row : chart) {
-        std::cout << row << std::endl;
+        // Print the combined candlestick chart
+        chart.printChart();
     }
 }
