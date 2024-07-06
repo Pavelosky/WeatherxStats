@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include "WeatherFrame.h"  // Include the WeatherFrame definition
+#include "WeatherFrame.h"  
 
 class Chart {
 public:

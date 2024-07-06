@@ -17,15 +17,21 @@ WeatherMain::WeatherMain()
 
 void WeatherMain::init()
 {
-
+    // Initialize variables
     int input;
     int selectedTimeFrame = 0;
     std::string selectedCountry = "";
 
+    // Main loop
     while (true)
     {
+        // Print menu options
         printMenu();
+
+        // Get user input
         input = getUserOption();
+
+        // Process user option
         processUserOption(input);
     }
 }
@@ -125,8 +131,10 @@ std::string WeatherMain::chooseCountry()
     return country;
 }
 
+// Function to choose a time frame
 int WeatherMain::chooseTimeFrame()
 {
+    // Map to store time frame options
     std::map<std::string, int> timeFrameMap;
     timeFrameMap["day"] = 9;
     timeFrameMap["month"] = 7;
@@ -142,6 +150,7 @@ int WeatherMain::chooseTimeFrame()
     std::cout << "| You chose: " << timeFrame << " |" << std::endl;
     std::cout << "==========================" << std::endl;
 
+    // Check the chosen time frame and return the corresponding value
     if (timeFrame == "day")
     {
         return timeFrameMap["day"];
@@ -156,6 +165,7 @@ int WeatherMain::chooseTimeFrame()
     }
     else
     {
+        // Invalid option, display error message and return 0
         std::cout << "==========================================" << std::endl;
         std::cout << "| Invalid option                         |" << std::endl;
         std::cout << "| Please choose a day, month or year     |" << std::endl;
@@ -164,19 +174,25 @@ int WeatherMain::chooseTimeFrame()
     }
 }
 
+// Function to print all countries from the CSV file
 void WeatherMain::printAllCountries(const std::string& filename) {
     CSVReader reader;
     std::ifstream file(filename);
 
+    // Check if the file can be opened
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filename << std::endl;
         return;
     }
 
     std::string line;
+    // Read the first line of the file
     if (std::getline(file, line)) {
+        // Tokenize the line using comma as the delimiter
         std::vector<std::string> headers = reader.tokenize(line, ',');
+        // Iterate through the headers starting from index 1
         for (size_t i = 1; i < headers.size(); ++i) {
+            // Print the column number and the header value
             std::cout << "Column " << i << ": " << headers[i] << std::endl;
         }
     } else {
