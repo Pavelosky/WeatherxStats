@@ -3,15 +3,16 @@
 #include <string>
 #include <vector>
 
-class WeatherFrame {
+class WeatherFrame
+{
 public:
-    std::string date; 
-    double firstTemp; 
-    double lastTemp; 
-    double highTemp; 
-    double lowTemp; 
-    std::vector<double> temperatures; 
+    std::string date;
+    double firstTemp;
+    double lastTemp;
+    double highTemp;
+    double lowTemp;
+    std::vector<double> temperatures;
 
-    WeatherFrame(); 
+    WeatherFrame();
     void addTemperature(double temp); // Method to add a temperature reading to the vector
 };

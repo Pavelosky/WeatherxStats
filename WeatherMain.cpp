@@ -9,8 +9,6 @@
 #include <fstream>
 #include <string>
 
-
-
 WeatherMain::WeatherMain()
 {
 }
@@ -175,33 +173,38 @@ int WeatherMain::chooseTimeFrame()
 }
 
 // Function to print all countries from the CSV file
-void WeatherMain::printAllCountries(const std::string& filename) {
+void WeatherMain::printAllCountries(const std::string &filename)
+{
     CSVReader reader;
     std::ifstream file(filename);
 
     // Check if the file can be opened
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Error: Could not open file " << filename << std::endl;
         return;
     }
 
     std::string line;
     // Read the first line of the file
-    if (std::getline(file, line)) {
+    if (std::getline(file, line))
+    {
         // Tokenize the line using comma as the delimiter
         std::vector<std::string> headers = reader.tokenize(line, ',');
         // Iterate through the headers starting from index 1
-        for (size_t i = 1; i < headers.size(); ++i) {
+        for (size_t i = 1; i < headers.size(); ++i)
+        {
             // Print the column number and the header value
             std::cout << "Column " << i << ": " << headers[i] << std::endl;
         }
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: File is empty or could not read the first line." << std::endl;
     }
 
     file.close();
 }
-    
 
 void WeatherMain::showData(const std::string &country, int timeFrame)
 {
