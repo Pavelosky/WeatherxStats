@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 
+// Start of the personally written code without assistance
 Candlestick::Candlestick()
 {
 }
@@ -49,3 +50,4 @@ std::vector<WeatherFrame> Candlestick::generateCandlesticks(const std::vector<st
 
     return candlesticks;
 }
+// End of the personally written code without assistance

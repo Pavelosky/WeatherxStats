@@ -72,7 +72,9 @@ std::vector<std::string> CSVReader::tokenize(const std::string &line, char separ
     return tokens;
 }
 
-// Get the index of a column in the CSV header line based on its name
+// Start of the personally written code without assistance
+// Get the index of a column in the CSV header line based on its name.
+// Needed for the task 3 of the exercise. Filtering by country.
 int CSVReader::getColumnIndex(const std::string &headerLine, const std::string &columnName)
 {
     std::vector<std::string> headers = tokenize(headerLine, ',');
@@ -85,3 +87,4 @@ int CSVReader::getColumnIndex(const std::string &headerLine, const std::string &
     }
     return -1; // Column not found
 }
+// End of the personally written code without assistance

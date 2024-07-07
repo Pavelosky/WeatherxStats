@@ -1,9 +1,11 @@
 #include "WeatherFrame.h"
 #include <limits>
 
+
 WeatherFrame::WeatherFrame()
     : firstTemp(0.0), lastTemp(0.0), highTemp(std::numeric_limits<double>::lowest()), lowTemp(std::numeric_limits<double>::max()) {}
 
+// Start of the personally written code without assistance
 void WeatherFrame::addTemperature(double temp)
 {
     temperatures.push_back(temp); // Add the temperature to the vector
@@ -18,3 +20,4 @@ void WeatherFrame::addTemperature(double temp)
         lowTemp = temp; // If so, update the lowest temperature
     }
 }
+// End of the personally written code without assistance

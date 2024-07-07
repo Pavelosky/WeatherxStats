@@ -19,13 +19,14 @@ void Chart::printChart() const
     // Determine the global range of prices
     double globalMax = -std::numeric_limits<double>::infinity();
     double globalMin = std::numeric_limits<double>::infinity();
-
+// Start of the personally written code without assistance
     // Find the maximum and minimum values among all candlesticks
     for (const auto &cs : candlesticks)
     {
         globalMax = std::max(globalMax, std::max({cs.open, cs.high, cs.low, cs.close}));
         globalMin = std::min(globalMin, std::min({cs.open, cs.high, cs.low, cs.close}));
     }
+// End of the personally written code without assistance
 
     // Normalize temperature levels to integer positions for the chart
     auto normalize = [globalMin, globalMax](double temperature)
@@ -44,6 +45,7 @@ void Chart::printChart() const
         normalizedPositions.emplace_back(openPos, closePos, highPos, lowPos);
     }
 
+// Start of the personally written code without assistance
     // Print the chart
     for (int i = 20; i >= 0; --i)
     {
@@ -139,6 +141,7 @@ void Chart::printChart() const
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
+// End of the personally written code without assistance
 
     // Print the dates and values
     for (const auto &cs : candlesticks)

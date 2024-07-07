@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string>
 
+// Start of the personally written code without assistance
 WeatherMain::WeatherMain()
 {
 }
@@ -231,3 +232,4 @@ void WeatherMain::showData(const std::string &country, int timeFrame)
         chart.printChart();
     }
 }
+// End of the personally written code without assistance
